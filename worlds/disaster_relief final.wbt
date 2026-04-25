@@ -1,0 +1,530 @@
+#VRML_SIM R2025a utf8
+
+WorldInfo {
+  title "Multi-Robot Disaster Relief"
+}
+Viewpoint {
+  orientation 0.04991032202600495 0.052470372761827984 -0.997374463146864 1.5234222003541822
+  position -2.0816010356235544 40.97821740678198 4.086127864538408
+}
+Background {
+  skyColor [
+    0.4 0.2 0.5
+  ]
+}
+DirectionalLight {
+  ambientIntensity 1
+  direction -0.5 -1 -0.3
+  intensity 2
+}
+Solid {
+  translation 0 -0.05 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.6 0.5 0.4
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 10 0.1 10
+      }
+    }
+  ]
+  name "floor"
+  boundingObject Box {
+    size 10 0.1 10
+  }
+}
+Solid {
+  translation 0 0.25 5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
+      }
+      geometry Box {
+        size 10 0.5 0.1
+      }
+    }
+  ]
+  name "wall_north"
+  boundingObject Box {
+    size 10 0.5 0.1
+  }
+}
+Solid {
+  translation 0 0.25 -5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
+      }
+      geometry Box {
+        size 10 0.5 0.1
+      }
+    }
+  ]
+  name "wall_south"
+  boundingObject Box {
+    size 10 0.5 0.1
+  }
+}
+Solid {
+  translation 5 0.25 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
+      }
+      geometry Box {
+        size 0.1 0.5 10
+      }
+    }
+  ]
+  name "wall_east"
+  boundingObject Box {
+    size 0.1 0.5 10
+  }
+}
+Solid {
+  translation -5 0.25 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.3 0.3 0.3
+      }
+      geometry Box {
+        size 0.1 0.5 10
+      }
+    }
+  ]
+  name "wall_west"
+  boundingObject Box {
+    size 0.1 0.5 10
+  }
+}
+Solid {
+  translation -3 0.3 -2
+  rotation 0 1 0 0.3
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 2 0.6 0.3
+      }
+    }
+  ]
+  name "collapsed_wall_1"
+  boundingObject Box {
+    size 2 0.6 0.3
+  }
+}
+Solid {
+  translation -3.5 0.5 -3
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.3 1 1.2
+      }
+    }
+  ]
+  name "standing_wall_1"
+  boundingObject Box {
+    size 0.3 1 1.2
+  }
+}
+Solid {
+  translation -2 0.15 -1
+  rotation 0 1 0 0.6
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.55 0.5 0.45
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 1.5 0.3 0.25
+      }
+    }
+  ]
+  name "fallen_slab_1"
+  boundingObject Box {
+    size 1.5 0.3 0.25
+  }
+}
+Solid {
+  translation -1.5 0.3 1.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.45 0.4 0.35
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.5
+      }
+    }
+  ]
+  name "rock_1"
+  boundingObject Sphere {
+    radius 0.5
+  }
+}
+Solid {
+  translation -2.5 0.4 2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.4 0.38 0.33
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.6
+      }
+    }
+  ]
+  name "rock_2"
+  boundingObject Sphere {
+    radius 0.6
+  }
+}
+Solid {
+  translation -1 0.25 2.8
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.48 0.43 0.38
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.4
+      }
+    }
+  ]
+  name "rock_3"
+  boundingObject Sphere {
+    radius 0.4
+  }
+}
+Solid {
+  translation 2.75778 0.2 0.234574
+  rotation 0 1 0 0.8
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 2.5 0.4 0.3
+      }
+    }
+  ]
+  name "collapsed_slab_2"
+  boundingObject Box {
+    size 2.5 0.4 0.3
+  }
+}
+Solid {
+  translation 3 0.5 1.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.3 1 1
+      }
+    }
+  ]
+  name "standing_wall_2"
+  boundingObject Box {
+    size 0.3 1 1
+  }
+}
+Solid {
+  translation 3 0.35 -2
+  rotation 1 0 0 1.5707
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.1 0.1 0.1
+        roughness 0.5
+        metalness 0.8
+      }
+      geometry Cylinder {
+        height 0.5
+        radius 0.2
+      }
+    }
+  ]
+  name "barrel_1"
+  boundingObject Cylinder {
+    height 0.5
+    radius 0.2
+  }
+}
+Solid {
+  translation 3.6 0.35 -2.5
+  rotation 1 0 0 1.5707
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.1 0.1 0.1
+        roughness 0.5
+        metalness 0.8
+      }
+      geometry Cylinder {
+        height 0.5
+        radius 0.2
+      }
+    }
+  ]
+  name "barrel_2"
+  boundingObject Cylinder {
+    height 0.5
+    radius 0.2
+  }
+}
+Solid {
+  translation 2.5 0.35 -3
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.8 0.1 0.1
+        roughness 0.5
+        metalness 0.8
+      }
+      geometry Cylinder {
+        height 0.7
+        radius 0.2
+      }
+    }
+  ]
+  name "barrel_3"
+  boundingObject Cylinder {
+    height 0.7
+    radius 0.2
+  }
+}
+Solid {
+  translation 1 0.25 -2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.45 0.4 0.35
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.4
+      }
+    }
+  ]
+  name "rock_4"
+  boundingObject Sphere {
+    radius 0.4
+  }
+}
+Solid {
+  translation 3.5 0.35 2.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.42 0.38 0.33
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.55
+      }
+    }
+  ]
+  name "rock_5"
+  boundingObject Sphere {
+    radius 0.55
+  }
+}
+Solid {
+  translation 0.811634 0.15 2.69848
+  rotation 0 1 0 1.2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.5 0.5 0.5
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 1.5 0.3 0.25
+      }
+    }
+  ]
+  name "debris_slab_1"
+  boundingObject Box {
+    size 1.5 0.3 0.25
+  }
+}
+Solid {
+  translation 4.26 0.05 4.5
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0.8 0
+        roughness 0.5
+        metalness 0.3
+      }
+      geometry Box {
+        size 0.8 0.1 0.8
+      }
+    }
+  ]
+  name "charging_station"
+}
+DEF robot_0 Robot {
+  translation -3.202913882070957 0.15 -3.499105012697882
+  rotation 0 1 0 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0.5 1
+      }
+      geometry Cylinder {
+        height 0.25
+        radius 0.3
+      }
+    }
+  ]
+  name "robot_0"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.15
+  }
+  controller "robot_controller"
+  customData "{\"battery\": 100.0, \"state\": \"idle\", \"task_done\": false}"
+}
+DEF robot_1 Robot {
+  translation -3.245249815027676 0.15 4.44285593201431
+  rotation 0 1 0 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0.5 1
+      }
+      geometry Cylinder {
+        height 0.25
+        radius 0.3
+      }
+    }
+  ]
+  name "robot_1"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.15
+  }
+  controller "robot_controller"
+  customData "{\"battery\": 100.0, \"state\": \"idle\", \"task_done\": false}"
+}
+DEF robot_2 Robot {
+  translation 1.7595238393686459 0.15 3.501334592078536
+  rotation 0 1 0 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0.5 1
+      }
+      geometry Cylinder {
+        height 0.25
+        radius 0.3
+      }
+    }
+  ]
+  name "robot_2"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.15
+  }
+  controller "robot_controller"
+  customData "{\"battery\": 100.0, \"state\": \"idle\", \"task_done\": false}"
+}
+DEF robot_3 Robot {
+  translation 4.497724200882291 0.15 -0.7506360300565431
+  rotation 0 1 0 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0.5 1
+      }
+      geometry Cylinder {
+        height 0.25
+        radius 0.3
+      }
+    }
+  ]
+  name "robot_3"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.15
+  }
+  controller "robot_controller"
+  customData "{\"battery\": 100.0, \"state\": \"idle\", \"task_done\": false}"
+}
+DEF robot_4 Robot {
+  translation 0.53663241551518 0.15 -3.2363195842025623
+  rotation 0 1 0 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0.5 1
+      }
+      geometry Cylinder {
+        height 0.25
+        radius 0.3
+      }
+    }
+  ]
+  name "robot_4"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.15
+  }
+  controller "robot_controller"
+  customData "{\"battery\": 100.0, \"state\": \"idle\", \"task_done\": false}"
+}
+Robot {
+  name "supervisor"
+  controller "supervisor_controller"
+  supervisor TRUE
+}
+DEF dynamic_task_1000 Solid {
+  translation 4.358418953279267 0.2 -3.05977390289822
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+      }
+      geometry Cylinder {
+        height 0.4
+        radius 0.2
+      }
+    }
+  ]
+  name "dynamic_task_1000"
+}
