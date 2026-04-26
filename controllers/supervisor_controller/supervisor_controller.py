@@ -160,7 +160,7 @@ tasks = [
     {"id": "task_8", "x":  4.5, "z":  0.5, "priority": 2,
      "assigned": False, "assigned_to": None,
      "spawn_time": 0, "deadline": TASK_DEADLINE, "done": False},
-    {"id": "task_9", "x":  0.5, "z":  4.5, "priority": 3,
+    {"id": "task_9", "x": -0.5, "z":  4.5, "priority": 3,
      "assigned": False, "assigned_to": None,
      "spawn_time": 0, "deadline": TASK_DEADLINE, "done": False},
 ]
