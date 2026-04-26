@@ -18,6 +18,7 @@ FIXES:
 
 import heapq
 import numpy as np
+from collections import deque
 
 # ─── GRID SETUP ──────────────────────────────────────────────────────────────
 
@@ -141,7 +142,6 @@ def _find_nearest_free(row, col):
     """
     if OCCUPANCY_GRID[row][col] == 0:
         return (row, col)
-    from collections import deque
     visited = {(row, col)}
     queue = deque([(row, col)])
     while queue:
