@@ -57,7 +57,17 @@ def load_trials(algo, mode):
     if not files:
         return None
 
-    runs = [json.load(open(f)) for f in files]  # noqa: SIM115 — simple read
+    runs = []
+    for f in files:
+        try:
+            with open(f) as fh:
+                runs.append(json.load(fh))
+        except json.JSONDecodeError as exc:
+            print(f"[Results] WARNING: skipping malformed file {f}: {exc}")
+            continue
+
+    if not runs:
+        return None
 
     out = {"algorithm": algo, "mode": mode, "n_trials": len(runs)}
     for k in METRIC_KEYS:
