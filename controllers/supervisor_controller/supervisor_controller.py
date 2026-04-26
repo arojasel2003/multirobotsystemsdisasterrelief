@@ -73,7 +73,11 @@ print(f"[Supervisor] Running with algorithm: {ALGORITHM_NAME}")
 
 # ─── CONSTANTS ───────────────────────────────────────────────────────────────
 
-ROBOT_DEFS          = ["robot_0", "robot_1", "robot_2", "robot_3", "robot_4"]
+if SCALE_MODE:
+    ROBOT_DEFS = ["robot_0", "robot_1", "robot_2", "robot_3", "robot_4",
+                  "robot_5", "robot_6", "robot_7"]
+else:
+    ROBOT_DEFS = ["robot_0", "robot_1", "robot_2", "robot_3", "robot_4"]
 BATTERY_CRITICAL    = 30.0
 STUCK_LIMIT         = 200
 TASK_DEADLINE       = 3000
@@ -397,6 +401,11 @@ realloc_triggers = []
 
 # ── Init robot positions (FIX 1: unpack tuple correctly) ─────────────────────
 for def_name in ROBOT_DEFS:
+    # Sanity check: abort if a robot DEF is missing from the .wbt (scale mode guard)
+    if SCALE_MODE and supervisor.getFromDef(def_name) is None:
+        print(f"[Supervisor] FATAL: SCALE_MODE=True but DEF '{def_name}' not found "
+              f"in the .wbt file. Add the robot node before running scale mode.")
+        raise SystemExit(1)
     x, z = get_position(def_name)
     sx, sz = snap_to_cell_center(x, z)
     set_position(def_name, sx, sz)
