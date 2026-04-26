@@ -52,7 +52,7 @@ else:
     from greedy import greedy_allocate, greedy_reallocate
     ALGORITHM_NAME = "Greedy"
 
-from astar import astar, simplify_path, OCCUPANCY_GRID, world_to_grid, grid_to_world
+from astar import astar, simplify_path, OCCUPANCY_GRID, world_to_grid, grid_to_world, snap_to_cell_center
 
 # ─── SETUP ───────────────────────────────────────────────────────────────────
 
@@ -368,9 +368,11 @@ realloc_triggers = []
 # ── Init robot positions (FIX 1: unpack tuple correctly) ─────────────────────
 for def_name in ROBOT_DEFS:
     x, z = get_position(def_name)
-    robot_states[def_name]["x"] = x
-    robot_states[def_name]["z"] = z
-    print(f"[Supervisor] {def_name} initial pos: ({x:.2f}, {z:.2f})")
+    sx, sz = snap_to_cell_center(x, z)
+    set_position(def_name, sx, sz)
+    robot_states[def_name]["x"] = sx
+    robot_states[def_name]["z"] = sz
+    print(f"[Supervisor] {def_name} start snapped: ({x:.2f},{z:.2f}) → ({sx:.2f},{sz:.2f})")
 
 # ── Remove any task nodes left over in the .wbt file ─────────────────────────
 # The .wbt may contain hardcoded task DEFs (e.g. dynamic_task_1000) from a
@@ -581,7 +583,12 @@ while supervisor.step(timestep) != -1:
         if task["assigned"] and task["assigned_to"] is not None:
             continue
 
-        start = (rs["x"], rs["z"])
+        sx, sz = snap_to_cell_center(rs["x"], rs["z"])
+        if sx != rs["x"] or sz != rs["z"]:
+            set_position(robot_name, sx, sz)
+            rs["x"] = sx
+            rs["z"] = sz
+        start = (sx, sz)
         goal  = (task["x"], task["z"])
         path  = simplify_path(astar(start, goal, rs["battery"]))
 
