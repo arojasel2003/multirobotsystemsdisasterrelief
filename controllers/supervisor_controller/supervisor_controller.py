@@ -45,6 +45,16 @@ import math
 
 USE_CBBA = True   # False = Greedy, True = CBBA
 
+STRESS_MODE = False   # True = aggressive battery drain + faster spawn + forced stuck
+SCALE_MODE  = False   # True = 8 robots (see Task 4)
+SEED        = 1       # fixed seed for reproducibility (see Task 5)
+
+random.seed(SEED)
+
+MODE_TAG = ("stress" if STRESS_MODE
+            else "scale8" if SCALE_MODE
+            else "baseline")
+
 if USE_CBBA:
     from cbba import cbba_allocate, cbba_reallocate
     ALGORITHM_NAME = "CBBA"
@@ -64,13 +74,27 @@ print(f"[Supervisor] Running with algorithm: {ALGORITHM_NAME}")
 # ─── CONSTANTS ───────────────────────────────────────────────────────────────
 
 ROBOT_DEFS          = ["robot_0", "robot_1", "robot_2", "robot_3", "robot_4"]
-BATTERY_CRITICAL    = 30.0   # must match robot_controller.py and allocators
-STUCK_LIMIT         = 200    # timesteps without movement before stuck trigger
-TASK_SPAWN_INTERVAL = 500    # timesteps between dynamic task spawns (~16s @ 32ms)
-CHARGING_STATION    = (4.26, 4.5)   # from .wbt: charging_station translation
-TASK_DEADLINE       = 3000   # timesteps before an unstarted task expires
-MAX_SPEED           = 1.5    # m/s — conservative to avoid skipping waypoints
-ARRIVAL_THRESH      = 0.5    # metres — how close = "arrived at waypoint"
+BATTERY_CRITICAL    = 30.0
+STUCK_LIMIT         = 200
+TASK_DEADLINE       = 3000
+MAX_SPEED           = 1.5
+ARRIVAL_THRESH      = 0.5
+CHARGING_STATION    = (4.26, 4.5)
+
+if STRESS_MODE:
+    TASK_SPAWN_INTERVAL = 150
+    BATTERY_DRAIN_MOVE  = 0.05
+    BATTERY_DRAIN_CHARGE_TRIP = 0.02
+    FORCED_STUCK_ROBOT  = "robot_0"
+    FORCED_STUCK_START  = 500
+    FORCED_STUCK_END    = 500 + STUCK_LIMIT + 50
+else:
+    TASK_SPAWN_INTERVAL = 500
+    BATTERY_DRAIN_MOVE  = 0.008
+    BATTERY_DRAIN_CHARGE_TRIP = 0.004
+    FORCED_STUCK_ROBOT  = None
+    FORCED_STUCK_START  = -1
+    FORCED_STUCK_END    = -1
 
 # ─── FREE CELL CACHE ─────────────────────────────────────────────────────────
 # Pre-compute all free cells (after inflation) for fast random task spawning
@@ -198,6 +222,12 @@ def move_step(def_name, rs):
     Checks inflated occupancy grid so robots never enter obstacle cells.
     Returns True if robot has arrived at the current waypoint.
     """
+    # Stress mode: freeze designated robot during stuck window
+    if (STRESS_MODE
+            and def_name == FORCED_STUCK_ROBOT
+            and FORCED_STUCK_START <= timestep_count <= FORCED_STUCK_END):
+        return False
+
     if not rs["waypoints"]:
         return False
 
@@ -352,7 +382,7 @@ def export_metrics():
         "avg_battery_per_task_%":    round(avg_battery, 2),
     }
 
-    filename = f"results_{ALGORITHM_NAME.lower()}.json"
+    filename = f"results_{ALGORITHM_NAME.lower()}_{MODE_TAG}_seed{SEED}.json"
     with open(filename, "w") as f:
         json.dump(summary, f, indent=2)
 
@@ -419,9 +449,9 @@ while supervisor.step(timestep) != -1:
 
             # Battery drain
             if rs["state"] == "moving":
-                rs["battery"] = max(0.0, rs["battery"] - 0.008)
+                rs["battery"] = max(0.0, rs["battery"] - BATTERY_DRAIN_MOVE)
             else:  # moving_to_charge
-                rs["battery"] = max(0.0, rs["battery"] - 0.004)
+                rs["battery"] = max(0.0, rs["battery"] - BATTERY_DRAIN_CHARGE_TRIP)
 
             if arrived:
                 rs["waypoints"].pop(0)
