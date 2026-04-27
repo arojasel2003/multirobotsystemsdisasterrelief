@@ -37,25 +37,47 @@ def is_available(robot):
     return robot["state"] == "idle" and robot["battery"] > 30.0
 
 
-def compute_score(robot, task, bundle):
+def compute_priority_pressure(robots, tasks):
+    """
+    Returns a multiplier in [0.5, 2.0] that scales PRIORITY_WEIGHT.
+    pressure = unassigned_high_pri / max(1, available_robots)
+    Low pressure (e.g. 1 hi-pri task, 5 robots) → multiplier ~0.5
+      → priority matters less, distance/battery dominate, robots spread out.
+    High pressure (e.g. 5 hi-pri tasks, 1 robot) → multiplier 2.0
+      → priority dominates, urgent tasks get hit first.
+    """
+    high_pri = sum(1 for t in tasks
+                   if t["priority"] == 3
+                   and not t["assigned"]
+                   and not t.get("done", False))
+    available = sum(1 for r in robots if is_available(r))
+    if available == 0:
+        return 1.0
+    raw = high_pri / available
+    return max(0.5, min(2.0, raw))
+
+
+def compute_score(robot, task, bundle, priority_pressure=1.0):
     """
     Bid score: higher = better fit.
     Priority dominates; distance and battery are tiebreakers.
     Bundle penalty discourages hoarding tasks.
+    priority_pressure scales PRIORITY_WEIGHT adaptively.
     """
-    dist           = distance(robot["x"], robot["z"], task["x"], task["z"])
-    battery_factor = (robot["battery"] / 100.0) * BATTERY_WEIGHT
-    priority_factor = task["priority"] * PRIORITY_WEIGHT
+    dist             = distance(robot["x"], robot["z"], task["x"], task["z"])
+    battery_factor   = (robot["battery"] / 100.0) * BATTERY_WEIGHT
+    priority_factor  = task["priority"] * PRIORITY_WEIGHT * priority_pressure
     distance_penalty = dist * DISTANCE_WEIGHT
     bundle_penalty   = len(bundle) * 0.5
     return priority_factor + battery_factor - distance_penalty - bundle_penalty
 
 # ─── PHASE 1: BUNDLE BUILDING ────────────────────────────────────────────────
 
-def build_bundles(robots, tasks):
+def build_bundles(robots, tasks, priority_pressure=1.0):
     """
     Each robot greedily builds its own bundle, up to MAX_BUNDLE_SIZE.
     A task may appear in multiple robots' bundles — consensus resolves this.
+    priority_pressure scales bid scores for high-priority tasks adaptively.
     """
     bundles = {r["name"]: [] for r in robots}
     bids    = {r["name"]: {} for r in robots}
@@ -73,7 +95,7 @@ def build_bundles(robots, tasks):
             best_score = float("-inf")
 
             for task in remaining:
-                score = compute_score(robot, task, bundles[robot["name"]])
+                score = compute_score(robot, task, bundles[robot["name"]], priority_pressure)
                 if score > best_score:
                     best_score = score
                     best_task  = task
@@ -90,7 +112,7 @@ def build_bundles(robots, tasks):
             closest = min(available_tasks,
                           key=lambda t: distance(robot["x"], robot["z"],
                                                  t["x"], t["z"]))
-            score = compute_score(robot, closest, [])
+            score = compute_score(robot, closest, [], priority_pressure)
             bundles[robot["name"]].append(closest["id"])
             bids[robot["name"]][closest["id"]] = score
 
@@ -170,7 +192,9 @@ def cbba_allocate(robots, tasks):
     print(f"[CBBA] Allocating: {len(available_robots)} robots, "
           f"{len(unassigned_tasks)} tasks")
 
-    bundles, bids = build_bundles(available_robots, unassigned_tasks)
+    priority_pressure = compute_priority_pressure(available_robots, unassigned_tasks)
+    print(f"[CBBA] Priority pressure: {priority_pressure:.2f}")
+    bundles, bids = build_bundles(available_robots, unassigned_tasks, priority_pressure)
 
     print("[CBBA] Bundles built:")
     for name, bundle in bundles.items():
@@ -238,3 +262,21 @@ if __name__ == "__main__":
     print("Running CBBA test...")
     result = cbba_allocate(test_robots, test_tasks)
     print(f"\nFinal: {result}")
+
+    # Low-pressure scenario: 1 hi-pri, 5 robots → pressure ≈ 0.5
+    low_pressure_tasks = [
+        {"id": "t_hi", "x": 0, "z": 0, "priority": 3, "assigned": False, "done": False, "assigned_to": None},
+        {"id": "t_lo1", "x": -4, "z": -4, "priority": 1, "assigned": False, "done": False, "assigned_to": None},
+        {"id": "t_lo2", "x":  4, "z":  4, "priority": 1, "assigned": False, "done": False, "assigned_to": None},
+    ]
+    print("\n--- Low pressure test ---")
+    print(cbba_allocate(test_robots, low_pressure_tasks))
+
+    # High-pressure scenario: 5 hi-pri, 5 robots → pressure ≈ 1.0
+    high_pressure_tasks = [
+        {"id": f"t_{i}", "x": (i-2)*1.5, "z": 0, "priority": 3,
+         "assigned": False, "done": False, "assigned_to": None}
+        for i in range(5)
+    ]
+    print("\n--- High pressure test ---")
+    print(cbba_allocate(test_robots, high_pressure_tasks))

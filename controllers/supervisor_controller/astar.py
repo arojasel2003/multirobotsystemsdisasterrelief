@@ -18,6 +18,7 @@ FIXES:
 
 import heapq
 import numpy as np
+from collections import deque
 
 # ─── GRID SETUP ──────────────────────────────────────────────────────────────
 
@@ -88,6 +89,17 @@ def grid_to_world(row, col):
     z = GRID_ORIGIN + row * CELL_SIZE + CELL_SIZE / 2.0
     return (x, z)
 
+
+def snap_to_cell_center(x, z):
+    """
+    Snap a world (x, z) coordinate to the centre of the nearest free grid
+    cell. If the natural cell is free, returns its centre. Otherwise BFS
+    outward to the closest free cell and returns that centre.
+    """
+    raw_row, raw_col = world_to_grid(x, z)
+    free_row, free_col = _find_nearest_free(raw_row, raw_col)
+    return grid_to_world(free_row, free_col)
+
 # ─── A* ALGORITHM ────────────────────────────────────────────────────────────
 
 def heuristic(a, b):
@@ -130,7 +142,6 @@ def _find_nearest_free(row, col):
     """
     if OCCUPANCY_GRID[row][col] == 0:
         return (row, col)
-    from collections import deque
     visited = {(row, col)}
     queue = deque([(row, col)])
     while queue:
